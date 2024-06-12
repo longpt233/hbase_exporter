@@ -3,18 +3,19 @@ package main
 import (
 	"fmt"
 	"io"
+
+	"longpt233/hbase_exporter/internal"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 
-	"./collector"
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 func getLogger(loglevel, logoutput, logfmt string) log.Logger {
@@ -119,13 +120,13 @@ func main() {
 	prometheus.MustRegister(versionMetric)
 
 	if *hbaseIsMaster {
-		prometheus.MustRegister(collector.NewHBaseJvm(logger, hbaseMasterURL))
-		prometheus.MustRegister(collector.NewMasterServer(logger, hbaseMasterURL))
+		prometheus.MustRegister(internal.NewHBaseJvm(logger, hbaseMasterURL))
+		prometheus.MustRegister(internal.NewMasterServer(logger, hbaseMasterURL))
 	} else {
-		prometheus.MustRegister(collector.NewHBaseJvm(logger, hbaseRegionserverURL))
-		prometheus.MustRegister(collector.NewRsServer(logger, hbaseRegionserverURL))
+		prometheus.MustRegister(internal.NewHBaseJvm(logger, hbaseRegionserverURL))
+		prometheus.MustRegister(internal.NewRsServer(logger, hbaseRegionserverURL))
 
-		prometheus.MustRegister(collector.NewRsRegion(logger, hbaseRegionserverURL))
+		prometheus.MustRegister(internal.NewRsRegion(logger, hbaseRegionserverURL))
 	}
 	level.Info(logger).Log("msg", "Build context", "build_context", version.BuildContext())
 	level.Info(logger).Log("msg", "Starting hbase_exporter", "version", version.Info())
