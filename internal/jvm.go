@@ -197,7 +197,14 @@ func (m *HBaseJvm) fetchAndDecodeHBaseJvm() (hbaseJvmResponse, error) {
 	}
 
 	data := gjson.Get(string(bts), "beans")
-	hbaseJvmStr := data.Array()[0].String()
+
+	beansJson := data.Array()
+
+	if len(beansJson) == 0 {
+		return mjr, fmt.Errorf("no beans in %v", string(bts))
+	}
+
+	hbaseJvmStr := beansJson[0].String()
 
 	if err := json.Unmarshal([]byte(hbaseJvmStr), &mjr); err != nil {
 		m.jsonParseFailures.Inc()

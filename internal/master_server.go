@@ -161,7 +161,14 @@ func (m *MasterServer) fetchAndDecodeMasterServer() (masterServerResponse, error
 	}
 
 	data := gjson.Get(string(bts), "beans")
-	masterServerStr := data.Array()[0].String()
+
+	beansJson := data.Array()
+
+	if len(beansJson) == 0 {
+		return msr, fmt.Errorf("no beans in %v", string(bts))
+	}
+
+	masterServerStr := beansJson[0].String()
 
 	if err := json.Unmarshal([]byte(masterServerStr), &msr); err != nil {
 		m.jsonParseFailures.Inc()

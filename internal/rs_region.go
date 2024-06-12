@@ -105,7 +105,13 @@ func (r *RsRegion) fetchAndDecodeRsRegion() (string, string, error) {
 		return "", "", err
 	}
 
-	data := gjson.Get(string(bts), "beans").Array()[0].Map()
+	beansJson := gjson.Get(string(bts), "beans").Array()
+
+	if len(beansJson) == 0 {
+		return "", "", fmt.Errorf("no beans in %v", string(bts))
+	}
+
+	data := beansJson[0].Map()
 
 	host := data["tag.Hostname"].String()
 	role := data["tag.Context"].String()
