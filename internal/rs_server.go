@@ -299,7 +299,7 @@ func (r *RsServer) fetchAndDecodeRsServer() (rsServerResponse, error) {
 	beansJson := data.Array()
 
 	if len(beansJson) == 0 {
-		return rsr, fmt.Errorf("no beans")
+		return rsr, fmt.Errorf("no beans in %v", string(bts))
 	}
 
 	rsServerStr := beansJson[0].String()
